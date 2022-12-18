@@ -124,45 +124,36 @@ So, what if we wanted to find out how the call stack would look like if we stopp
 
 Step by step!
 
-Firstly at line 21 we need to look into the corresponding assembly instruction at **4011e4**. As we described before, the ***call*** assembly instruction will push into the stack the value **4011e9** which is the address of the next instruction commonly called the *return address*. 
+Firstly at line 21 we need to look into the corresponding assembly instruction at **4011E4**. As we described before, the ***call*** assembly instruction will push into the stack the value **4011e9** which is the address of the next instruction commonly called the *return address*. 
 
-Similarly once we are inside *foo* at source line 17 (assembly address **4011be**), another *call* will be invoked, hence, the address **4011c3** will be pushed into the stack. We have two so far: **4011e9** and on top of it **4011c3**. If we keep tracking the execution until we get to *print_result* at assembly memory address **40113b** the stack should contain this:
+Similarly once we are inside *foo* at source line 17 (assembly address **4011BE**), another *call* will be invoked, hence, the address **4011C3** will be pushed into the stack. We have two so far: **4011E9** and on top of it **4011C3**. 
+
+If we keep simulating until we just executed *print_result* (source line 5, assembly address **40114F**) the call stack inside the stack should be like this:
 
 
 ![](pics/stack.png)
 
-So, what happens now?
+So, what happens now? Take a look at the picture and we will reason about it!
 
 ![](pics/stack_usage.png)
 
+| source line / hex mem address | description of what happens as we step over                  |
+| ----------------------------- | ------------------------------------------------------------ |
+| 5 / 40114f                    | three instructions execute from which ***ret*** is the relevant one. ***ret*** will pop **4011A5** from the stack and transfer the execution to that memory address |
+| 13 / 4011A5                   | It will execute 3 assembly instructions until it gets to ***ret*** where it will pop **4011C3** from the stack and, again, transfer the execution to the address |
+| 18 / 4011C3                   | Again, it will execute assembly until it gets to the ***ret*** at 4011C8 and it will pop the last address in our example which is **4011E9** and transfer the execution |
+| 22 / 4011E9                   | It will get the return address that the corresponding ***call*** instruction invoked *main* in the first place (which is not included in this example) |
 
 
 
+#### Conclusions
+
+* The call stack is a sequence of return addresses
+* The call stack is stored interleaved with other elements in the stack
+* The instruction pair ***call***/***ret*** is the mechanism that controls the flow between subroutines
+* There is no 1:1 correspondence between source code and assembly code.
 
 
 
-
-
-
-
-
-
-There are a few things to consider that are relevant for our case:
-
-1. **Very** rarely (line 10 -> instruction at 4011eb) there is a 1 to 1 correspondence between one line of C++ source code and one assembly instruction.
-2. Not only there is no 1 to 1 correspondence, sometimes it is not even sequential (line 11 corresponds to blocks  4011f2-4011FF and 40120F-401218).
-
-so, what do we retrieve
-
-```c++
-main -> foo -> bar -> factorial -> print_result
-```
-
-
-
-This very simple program is translated to assembly code as we can see in the boxes around 
-
-If we captured the call stack **in line 2**, we would get a series of memory addresses. Starting by the current execution point (address corresponding to line 2) Each of them represent it would be a sequence of memory return addresses. This means that after the execution of *baz* it will return the control to  corresponding with this particular source code at lines 2 (the current instruction pointer), 7 (right after the call) and 11 (right after the call as well) in that order. the 2, 7 and 11 numbers are what we want to see but internally they are represented by memory addresses.
-
-:warning:A  warning
+:warning:warning
 
