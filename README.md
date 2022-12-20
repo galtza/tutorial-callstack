@@ -140,6 +140,7 @@ The compilers often offer the ability to include this as part of the debugging i
 ## Conclusions
 
 * The call stack is a sequence of return addresses
-* The return addresses can be stored interleaved with other information like parameters
+* The return addresses are usually stored interleaved with other information like parameters
 * The instruction pair ***CALL***/***RET*** is the mechanism that controls the flow between subroutines
 * There is no 1:1 correspondence between source code and assembly code
+* Compilers expose the correspondence between source code and assembly code
