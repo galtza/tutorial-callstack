@@ -39,8 +39,7 @@ Given this simple program:
 As an example, the compiler could translate the C **Foo** function into several assembly instructions like in the picture:
 
 <img align="left" src="pics/subroutines_foo_translation.png">
-
-
+<br clear="left"/>
 
 ## A Basic Example
 
@@ -118,26 +117,32 @@ In this particular case the sequence of calls happen in the following order:
 As you can see in the images, we have provided an example of how source code is translated into assembly instructions. The source code is on the left, with line numbers at the beginning of each line, while the corresponding assembly instructions are on the right, with memory addresses at the right side of each line.
 
 <img align="left" src="pics/main_function.png">
+<br clear="left"/>
 
 It is important to note that there is **no direct one-to-one correspondence** between a line of source code and the corresponding assembly instructions. This is a **fundamental** concept to understand how memory addresses are translated into useful information for the CPU to execute instructions. In the following sections, we will delve deeper into how memory addresses are used in the execution of instructions and how it relates to the call stack.
 
 Similarly, *foo* looks like this:
 
 <img align="left" src="pics/foo_function.png">
+<br clear="left"/>
 
 which is pretty much the same. Now, a more complex one; *factorial*:
 
 <img align="left" src="pics/factorial_function.png">
+<br clear="left"/>
 
 This one is a bit more complex and shows us interesting things. Notice how some source code lines correspond to different non-sequential groups of instructions like the *for* loop in line 9 that corresponds to address blocks *[**401172**, **40117F**]* and *[**40118F**, **401198**]*.
 
 Finally the *print_result* function:
 
 <img align="left" src="pics/print_result_function.png">
+<br clear="left"/>
 
 So, what if we wanted to find out how the call stack would look like if we stopped the execution when we are about to run the *printf* function? In that particular case, the subroutines that are active are *main*, *foo*, *factorial* and *print_result*. 
 
 Step by step!
+
+<img align="right" src="pics/stack.png">
 
 Firstly at line 21, we need to look into the corresponding assembly instruction at **4011E4**. As we explained in the basic example section, the ***CALL*** assembly instruction will push into the stack the value **4011e9** which is the address of the next instruction commonly called the *return address*.
 
@@ -145,11 +150,12 @@ Similarly, once we are inside *foo* at source line 17 (assembly address **4011BE
 
 If we keep simulating until we just executed *print_result* (source line 5, assembly address **40114F**) the call stack inside the stack should be like this:
 
-<img align="left" src="pics/stack.png">
+<br clear="right"/>
 
 So, what happens now? Take a look at the picture and let’s reason about it!
 
 <img align="left" src="pics/stack_usage.png">
+<br clear="left"/>
 
 Let’s suppose that the next instruction that is going to be executed is the one at **40114F** (Which corresponds to the line 5 of source code).
 
